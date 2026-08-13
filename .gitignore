@@ -9,7 +9,18 @@ __pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media
+
+# media 폴더 내 모든 파일 무시
+media/*
+
+# products 및 backgrounds 폴더 내부 파일 및 하위 디렉터리는 추적 허용
+!media/products/
+!media/products/**
+!media/backgrounds/
+!media/backgrounds/**
+
+# 빈 폴더 구조 유지를 위한 .gitkeep 파일 추적 허용
+!.gitkeep
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repository. Update and uncomment the following line accordingly.
@@ -283,3 +294,5 @@ pyrightconfig.json
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,django
+
+test.py
