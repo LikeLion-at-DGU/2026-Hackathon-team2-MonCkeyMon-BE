@@ -1,39 +1,79 @@
 from rest_framework import serializers
-from .models import Video
+from experiences.models import ExperienceSession
+
 
 class ShareDetailSerializer(serializers.ModelSerializer):
-    session_id = serializers.CharField(source='session.id', read_only=True)
-    product_name = serializers.CharField(source='session.product.name', read_only=True)
-    video_url = serializers.SerializerMethodField()
-    composite_image_url = serializers.SerializerMethodField()
+    session_id = serializers.UUIDField(source='id', read_only=True)
+    product_name = serializers.CharField(source='product.name', read_only=True)
+
+    person_image_url = serializers.SerializerMethodField()
+    background_image_url = serializers.SerializerMethodField()
     product_image_url = serializers.SerializerMethodField()
     product_purchase_url = serializers.SerializerMethodField()
+    composite_image_url = serializers.SerializerMethodField()
 
     class Meta:
-        model = Video
+        model = ExperienceSession
         fields = [
             'session_id',
-            'video_url',
             'composite_image_url',
+            'person_image_url',
+            'background_image_url',
             'product_name',
             'product_image_url',
             'product_purchase_url',
         ]
 
-    def get_video_url(self, obj):
-        request = self.context.get('request')
-        return request.build_absolute_uri(obj.video_file.url) if request and obj.video_file else None
-
     def get_composite_image_url(self, obj):
         request = self.context.get('request')
-        session = obj.session
-        return request.build_absolute_uri(session.composite_image.url) if request and session.composite_image else None
+
+        if obj.composite_image:
+            return (
+                request.build_absolute_uri(obj.composite_image.url)
+                if request
+                else obj.composite_image.url
+            )
+
+        return None
+
+    def get_person_image_url(self, obj):
+        request = self.context.get('request')
+
+        if obj.person_image:
+            return (
+                request.build_absolute_uri(obj.person_image.url)
+                if request
+                else obj.person_image.url
+            )
+
+        return None
+
+    def get_background_image_url(self, obj):
+        request = self.context.get('request')
+
+        if obj.background and obj.background.image:
+            return (
+                request.build_absolute_uri(obj.background.image.url)
+                if request
+                else obj.background.image.url
+            )
+
+        return None
 
     def get_product_image_url(self, obj):
         request = self.context.get('request')
-        product = obj.session.product
-        return request.build_absolute_uri(product.overlay_image.url) if request and product and product.overlay_image else None
+
+        if obj.product and obj.product.overlay_image:
+            return (
+                request.build_absolute_uri(obj.product.overlay_image.url)
+                if request
+                else obj.product.overlay_image.url
+            )
+
+        return None
 
     def get_product_purchase_url(self, obj):
-        product = obj.session.product
-        return product.purchase_url if product and hasattr(product, 'purchase_url') else None
+        if obj.product and obj.product.purchase_url:
+            return obj.product.purchase_url
+
+        return None
