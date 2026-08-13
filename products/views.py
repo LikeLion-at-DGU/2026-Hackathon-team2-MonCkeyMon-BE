@@ -1,3 +1,92 @@
-from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from django.db.models import Count
 
-# Create your views here.
+from .models import Product, Background
+from .serializers import ProductSerializer, BackgroundSerializer
+
+
+class ProductListView(ListAPIView):
+    """
+    GET /api/products/
+    쿼리 파라미터: ?season=26 SS&gender=FEMALE&category=숄더백
+    """
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        qs = Product.objects.all()
+        season = self.request.query_params.get('season')
+        gender = self.request.query_params.get('gender')
+        category = self.request.query_params.get('category')
+
+        if season:
+            qs = qs.filter(season=season)
+        if gender:
+            qs = qs.filter(gender=gender)
+        if category:
+            qs = qs.filter(category=category)
+        return qs
+
+    def list(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+        top3 = Product.objects.order_by('-like_count')[:3]
+
+        return Response({
+            "top3": ProductSerializer(top3, many=True, context={'request': request}).data,
+            "products": ProductSerializer(qs, many=True, context={'request': request}).data,
+            "filters": {
+                "seasons": list(Product.objects.values_list('season', flat=True).distinct()),
+                "genders": list(Product.objects.values_list('gender', flat=True).distinct()),
+                "categories": list(Product.objects.values_list('category', flat=True).distinct()),
+            },
+        })
+
+
+class BackgroundListView(ListAPIView):
+    """
+    GET /api/backgrounds/
+    쿼리 파라미터: ?type=CURATION
+    """
+    serializer_class = BackgroundSerializer
+
+    def get_queryset(self):
+        qs = Background.objects.all()
+        bg_type = self.request.query_params.get('type')
+        if bg_type:
+            qs = qs.filter(type=bg_type)
+        return qs
+
+    def list(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+
+        # 이달의 테마 TOP3: 세션에서 많이 선택된 순
+        top3_ids = (
+            Background.objects
+            .annotate(cnt=Count('experiencesession'))
+            .order_by('-cnt', 'id')
+            .values_list('id', flat=True)[:3]
+        )
+        top3 = Background.objects.filter(id__in=list(top3_ids))
+
+        return Response({
+            "top3": BackgroundSerializer(top3, many=True, context={'request': request}).data,
+            "backgrounds": BackgroundSerializer(qs, many=True, context={'request': request}).data,
+        })
+
+
+class ProductLikeView(APIView):
+    """POST /api/products/<id>/like/"""
+
+    def post(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        product.like_count += 1
+        product.save()
+
+        return Response({
+            "message": "추천 반영 완료",
+            "product_id": product.id,
+            "like_count": product.like_count,
+        }, status=status.HTTP_200_OK)
