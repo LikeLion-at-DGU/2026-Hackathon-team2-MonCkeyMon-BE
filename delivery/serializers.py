@@ -7,6 +7,7 @@ class ShareDetailSerializer(serializers.ModelSerializer):
     video_url = serializers.SerializerMethodField()
     composite_image_url = serializers.SerializerMethodField()
     product_image_url = serializers.SerializerMethodField()
+    product_purchase_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Video
@@ -16,6 +17,7 @@ class ShareDetailSerializer(serializers.ModelSerializer):
             'composite_image_url',
             'product_name',
             'product_image_url',
+            'product_purchase_url',
         ]
 
     def get_video_url(self, obj):
@@ -31,3 +33,7 @@ class ShareDetailSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         product = obj.session.product
         return request.build_absolute_uri(product.overlay_image.url) if request and product and product.overlay_image else None
+
+    def get_product_purchase_url(self, obj):
+        product = obj.session.product
+        return product.purchase_url if product and hasattr(product, 'purchase_url') else None
