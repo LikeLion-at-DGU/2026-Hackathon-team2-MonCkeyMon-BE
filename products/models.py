@@ -15,6 +15,7 @@ class Product(models.Model):
     season = models.CharField(max_length=20, default='26 SS')   # 예: '26 SS', '25 FW', '25 SS' 등
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='FEMALE') # 여성 / 남성 / 공용
     category = models.CharField(max_length=50, default='숄더백') # 숄더백, 호보백, 미니백, 백팩 등
+    purchase_url = models.CharField(max_length=500, blank=True, null=True) # 구매링크
     
     like_count = models.IntegerField(default=0)
 
