@@ -11,7 +11,7 @@ class ProductSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'overlay_image',
-            'season',
+            'is_new',
             'gender',
             'category',
             'purchase_url',
