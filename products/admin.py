@@ -4,8 +4,8 @@ from .models import Product, Background
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'season', 'gender', 'category', 'like_count']
-    list_filter = ['season', 'gender', 'category']
+    list_display = ['id', 'name', 'gender', 'category', 'is_new', 'like_count']
+    list_filter = ['gender', 'category', 'is_new']
     search_fields = ['name']
 
 

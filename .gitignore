@@ -297,3 +297,7 @@ pyrightconfig.json
 
 test.py
 dummydata.py
+
+bags/
+make_csv.py
+/backgrounds/

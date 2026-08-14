@@ -16,7 +16,7 @@ class Product(models.Model):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='FEMALE') # 여성 / 남성 / 공용
     category = models.CharField(max_length=50, default='숄더백') # 숄더백, 호보백, 미니백, 백팩 등
     purchase_url = models.CharField(max_length=500, blank=True, null=True) # 구매링크
-    
+    is_new = models.BooleanField(default=False)   # 신상 여부
     like_count = models.IntegerField(default=0)
 
     def __str__(self):

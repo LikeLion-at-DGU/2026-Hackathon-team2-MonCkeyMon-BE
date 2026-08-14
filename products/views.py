@@ -12,22 +12,22 @@ from .serializers import ProductSerializer, BackgroundSerializer
 class ProductListView(ListAPIView):
     """
     GET /api/products/
-    쿼리 파라미터: ?season=26 SS&gender=FEMALE&category=숄더백
+    쿼리 파라미터: ?gender=FEMALE&category=백팩&is_new=true
     """
     serializer_class = ProductSerializer
 
     def get_queryset(self):
         qs = Product.objects.all()
-        season = self.request.query_params.get('season')
         gender = self.request.query_params.get('gender')
         category = self.request.query_params.get('category')
+        is_new = self.request.query_params.get('is_new')
 
-        if season:
-            qs = qs.filter(season=season)
         if gender:
             qs = qs.filter(gender=gender)
         if category:
             qs = qs.filter(category=category)
+        if is_new is not None:
+            qs = qs.filter(is_new=is_new.lower() == 'true')
         return qs
 
     def list(self, request, *args, **kwargs):
@@ -38,7 +38,6 @@ class ProductListView(ListAPIView):
             "top3": ProductSerializer(top3, many=True, context={'request': request}).data,
             "products": ProductSerializer(qs, many=True, context={'request': request}).data,
             "filters": {
-                "seasons": list(Product.objects.values_list('season', flat=True).distinct()),
                 "genders": list(Product.objects.values_list('gender', flat=True).distinct()),
                 "categories": list(Product.objects.values_list('category', flat=True).distinct()),
             },
@@ -48,7 +47,7 @@ class ProductListView(ListAPIView):
 class BackgroundListView(ListAPIView):
     """
     GET /api/backgrounds/
-    쿼리 파라미터: ?type=CURATION
+    쿼리 파라미터: ?type=나라 별
     """
     serializer_class = BackgroundSerializer
 
