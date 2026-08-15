@@ -30,3 +30,7 @@ class ProductLikeCountSerializer(serializers.ModelSerializer):
             'name',
             'like_count',
         ]
+
+
+class CompletedExperienceCountSerializer(serializers.Serializer):
+    completed_experience_count = serializers.IntegerField()
