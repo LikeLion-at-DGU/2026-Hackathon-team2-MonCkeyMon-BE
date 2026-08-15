@@ -26,7 +26,7 @@ class ProductListView(ListAPIView):
             qs = qs.filter(gender=gender)
         if category:
             qs = qs.filter(category=category)
-        if is_new is not None:
+        if is_new:
             qs = qs.filter(is_new=is_new.lower() == 'true')
         return qs
 
