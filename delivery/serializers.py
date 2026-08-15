@@ -4,6 +4,9 @@ from experiences.models import ExperienceSession
 
 class ShareDetailSerializer(serializers.ModelSerializer):
     session_id = serializers.UUIDField(source='id', read_only=True)
+    product_id = serializers.IntegerField(source='product.id', read_only=True)
+    background_id = serializers.IntegerField(source='background.id', read_only=True)
+
     product_name = serializers.CharField(source='product.name', read_only=True)
 
     person_image_url = serializers.SerializerMethodField()
@@ -16,6 +19,8 @@ class ShareDetailSerializer(serializers.ModelSerializer):
         model = ExperienceSession
         fields = [
             'session_id',
+            'product_id',
+            'background_id',
             'composite_image_url',
             'person_image_url',
             'background_image_url',

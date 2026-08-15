@@ -1,12 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from experiences.models import ExperienceSession
 from products.models import Product, Background
 
 from .serializers import (
     ProductChooseCountSerializer,
     BackgroundChooseCountSerializer,
     ProductLikeCountSerializer,
+    CompletedExperienceCountSerializer
 )
 
 
@@ -59,3 +60,19 @@ class ProductLikeCountView(APIView):
         return Response({
             'products': products,
         })
+
+
+class CompletedExperienceCountView(APIView):
+
+    def get(self, request):
+        count = ExperienceSession.objects.exclude(
+            composite_image=''
+        ).filter(
+            composite_image__isnull=False
+        ).count()
+
+        serializer = CompletedExperienceCountSerializer({
+            'completed_experience_count': count
+        })
+
+        return Response(serializer.data)
