@@ -21,10 +21,15 @@ with open(CSV_FILE, encoding="utf-8-sig") as fp:
         path = os.path.join(BAGS_DIR, filename)
 
         if not os.path.exists(path):
+            def _norm(s):
+                s = unicodedata.normalize("NFKD", s)
+                s = "".join(c for c in s if not unicodedata.combining(c))
+                return "".join(c for c in s if c.isalnum()).lower()
+
             found = None
-            target = unicodedata.normalize("NFC", filename).replace(" ", "_")
+            target = _norm(os.path.splitext(filename)[0])
             for f in os.listdir(BAGS_DIR):
-                if unicodedata.normalize("NFC", f).replace(" ", "_") == target:
+                if _norm(os.path.splitext(f)[0]) == target:
                     found = os.path.join(BAGS_DIR, f)
                     break
             if not found:
