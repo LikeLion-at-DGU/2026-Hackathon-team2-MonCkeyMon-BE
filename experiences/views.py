@@ -61,21 +61,17 @@ class PhotoUploadView(APIView):
         session.person_image = serializer.validated_data["person_image"]
         session.save()
 
-        # AI 합성 전 임시 처리:
-        # 현재는 원본 사진을 composite_image로 사용합니다.
-        # delivery의 실제 합성 로직이 완성되면 이 부분을 교체합니다.
-        session.composite_image = session.person_image.name
         session.status = "PHOTO_DONE"
-        session.save(update_fields=["composite_image", "status"])
+        session.save(update_fields=["status"])
 
-        composite_image_url = request.build_absolute_uri(
-            session.composite_image.url
+        person_image_url = request.build_absolute_uri(
+            session.person_image.url
         )
 
         return Response(
             {
                 "message": "사진 업로드 완료",
-                "composite_image": composite_image_url,
+                "person_image": person_image_url,
                 "status": session.status,
             },
             status=status.HTTP_200_OK,
@@ -112,9 +108,6 @@ class VideoGenerateView(APIView):
         session.guide_action = serializer.validated_data.get("guide_action")
         session.status = "PROCESSING"
         session.save(update_fields=["guide_action", "status"])
-
-        # 교현님이 delivery/services.py에 generate_video_task를 만들면
-        # 여기에서 실제 AI 영상 생성 작업을 호출합니다.
 
         return Response(
             {
