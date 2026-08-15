@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'delivery',
     'experiences',
     'products',
+    'analytics',
 ]
 
 MIDDLEWARE = [

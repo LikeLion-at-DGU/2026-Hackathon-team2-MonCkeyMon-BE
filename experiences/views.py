@@ -40,6 +40,21 @@ class ExperienceDetailView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
+        if "background_id" in request.data:
+            background = session.background
+
+            if background:
+                background.choose_count += 1
+                background.save(update_fields=["choose_count"])
+
+            
+        if "product_id" in request.data:
+            product = session.product
+
+            if product:
+                product.choose_count += 1
+                product.save(update_fields=["choose_count"])
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

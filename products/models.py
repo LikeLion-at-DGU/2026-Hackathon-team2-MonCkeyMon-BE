@@ -30,6 +30,7 @@ class Product(models.Model):
     purchase_url = models.CharField(max_length=500, blank=True, null=True)
     is_new = models.BooleanField(default=False)              # 신상 여부
     like_count = models.IntegerField(default=0)
+    choose_count = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['id']
@@ -48,6 +49,7 @@ class Background(models.Model):
     image = models.ImageField(upload_to='backgrounds/')
     type = models.CharField(max_length=50, choices=TYPE_CHOICES, default='나라 별')
     tags = models.CharField(max_length=200, blank=True)      # 쉼표 구분: "후지산,신사"
+    choose_count = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['id']
