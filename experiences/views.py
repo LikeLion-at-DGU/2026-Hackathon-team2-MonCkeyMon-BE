@@ -109,9 +109,6 @@ class VideoGenerateView(APIView):
         session.status = "PROCESSING"
         session.save(update_fields=["guide_action", "status"])
 
-        # 교현님이 delivery/services.py에 generate_video_task를 만들면
-        # 여기에서 실제 AI 영상 생성 작업을 호출합니다.
-
         return Response(
             {
                 "message": "AI 영상 생성이 시작되었습니다.",
