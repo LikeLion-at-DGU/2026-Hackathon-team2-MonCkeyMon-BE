@@ -55,10 +55,15 @@ with open(CSV_FILE, encoding="utf-8-sig") as fp:
             tags=row["tags"].strip(),
         )
 
-        with open(path, "rb") as img:
-            bg.image.save(filename, File(img), save=False)
+        norm_path = path.replace("\\", "/")
+        if norm_path.startswith("media/"):
+            # 이미 media 안에 있는 파일이면 경로만 연결 (복사 안 함)
+            bg.image.name = norm_path[len("media/"):]
+            bg.save()
+        else:
+            with open(path, "rb") as img:
+                bg.image.save(filename, File(img), save=True)
 
-        bg.save()
         created += 1
         print(f"등록: {name} [{bg.type}]")
 
