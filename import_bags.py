@@ -10,7 +10,7 @@ from django.core.files import File
 from products.models import Product
 
 CSV_FILE = "bags.csv"
-BAGS_DIR = "bags"
+BAGS_DIR = "bags" if os.path.isdir("bags") else "media/products/overlays"
 
 created = 0
 skipped = 0
@@ -21,11 +21,10 @@ with open(CSV_FILE, encoding="utf-8-sig") as fp:
         path = os.path.join(BAGS_DIR, filename)
 
         if not os.path.exists(path):
-            # 맥/윈도우 한글 인코딩 차이 대응
             found = None
-            target = unicodedata.normalize("NFC", filename)
+            target = unicodedata.normalize("NFC", filename).replace(" ", "_")
             for f in os.listdir(BAGS_DIR):
-                if unicodedata.normalize("NFC", f) == target:
+                if unicodedata.normalize("NFC", f).replace(" ", "_") == target:
                     found = os.path.join(BAGS_DIR, f)
                     break
             if not found:
@@ -34,21 +33,20 @@ with open(CSV_FILE, encoding="utf-8-sig") as fp:
                 continue
             path = found
 
-        # 이름 + 색상 + 사이즈로 제품명 구성 (색상별로 다른 제품)
-        parts = [row["name"].strip()]
-        if row["color"].strip():
-            parts.append(row["color"].strip())
-        if row["size"].strip():
-            parts.append(row["size"].strip())
-        display_name = " ".join(parts)
+        name = row["name"].strip()
+        color = row["color"].strip()
+        size = row["size"].strip()
 
-        if Product.objects.filter(name=display_name).exists():
-            print(f"이미 있음: {display_name}")
+        # 이름 + 색상 + 사이즈 조합이 같으면 중복으로 간주
+        if Product.objects.filter(name=name, color=color, size=size).exists():
+            print(f"이미 있음: {name} ({color}/{size})")
             skipped += 1
             continue
 
         product = Product(
-            name=display_name,
+            name=name,
+            color=color,
+            size=size,
             gender=row["gender"].strip() or "FEMALE",
             category=row["category"].strip(),
             is_new=row["is_new"].strip().upper() == "TRUE",
@@ -60,6 +58,6 @@ with open(CSV_FILE, encoding="utf-8-sig") as fp:
 
         product.save()
         created += 1
-        print(f"등록: {display_name}")
+        print(f"등록: {name} ({color}/{size})")
 
 print(f"\n완료 - 등록 {created}개 / 건너뜀 {skipped}개")

@@ -11,6 +11,8 @@ class ProductSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'overlay_image',
+            'color',
+            'size',
             'is_new',
             'gender',
             'category',
@@ -28,10 +30,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class BackgroundSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField()
 
     class Meta:
         model = Background
-        fields = ['id', 'name', 'image', 'type']
+        fields = ['id', 'name', 'image', 'type', 'tags']
 
     def get_image(self, obj):
         request = self.context.get('request')
@@ -39,3 +42,8 @@ class BackgroundSerializer(serializers.ModelSerializer):
             url = obj.image.url
             return request.build_absolute_uri(url) if request else url
         return None
+
+    def get_tags(self, obj):
+        if not obj.tags:
+            return []
+        return [t.strip() for t in obj.tags.split(",") if t.strip()]
