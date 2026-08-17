@@ -47,7 +47,6 @@ class ExperienceDetailView(APIView):
                 background.choose_count += 1
                 background.save(update_fields=["choose_count"])
 
-            
         if "product_id" in request.data:
             product = session.product
 
@@ -63,12 +62,6 @@ class PhotoUploadView(APIView):
 
     def post(self, request, session_id):
         session = get_object_or_404(ExperienceSession, id=session_id)
-
-        if session.background is None:
-            return Response(
-                {"detail": "배경을 선택한 뒤 사진을 업로드할 수 있습니다."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         serializer = PhotoUploadSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -163,7 +156,7 @@ class ExperienceStatusView(APIView):
                 )
 
         return Response(response_data, status=status.HTTP_200_OK)
-    
+
 class ShareLinkView(APIView):
     permission_classes = [AllowAny]
 
