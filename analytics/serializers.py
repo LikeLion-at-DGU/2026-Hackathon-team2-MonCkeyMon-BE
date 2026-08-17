@@ -73,5 +73,6 @@ class ProductSessionSerializer(serializers.ModelSerializer):
             'name',
             'color',
             'size',
+            'is_new',
             'session_count',
         ]

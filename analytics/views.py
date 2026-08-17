@@ -177,9 +177,17 @@ class CategorySessionTop5View(APIView):
 class ProductSessionView(APIView):
 
     def get(self, request):
-        products = Product.objects.order_by(
-            '-choose_count'
-        )
+        products = Product.objects.all()
+
+        search = request.query_params.get('search')
+        is_new = request.query_params.get('is_new')
+
+        if search:
+            products = products.filter(name__icontains=search)
+        if is_new:
+            products = products.filter(is_new=is_new.lower() == 'true')
+
+        products = products.order_by('-choose_count')
 
         serializer = ProductSessionSerializer(
             products,
