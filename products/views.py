@@ -3,7 +3,6 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from django.db.models import Count
 
 from .models import Product, Background
 from .serializers import ProductSerializer, BackgroundSerializer
@@ -32,7 +31,9 @@ class ProductListView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         qs = self.get_queryset()
-        top3 = Product.objects.order_by('-like_count')[:3]
+
+        # 인기 TOP3: 선택 횟수 기준
+        top3 = Product.objects.order_by('-choose_count')[:3]
 
         return Response({
             "top3": ProductSerializer(top3, many=True, context={'request': request}).data,
@@ -61,14 +62,8 @@ class BackgroundListView(ListAPIView):
     def list(self, request, *args, **kwargs):
         qs = self.get_queryset()
 
-        # 이달의 테마 TOP3: 세션에서 많이 선택된 순
-        top3_ids = (
-            Background.objects
-            .annotate(cnt=Count('experiencesession'))
-            .order_by('-cnt', 'id')
-            .values_list('id', flat=True)[:3]
-        )
-        top3 = Background.objects.filter(id__in=list(top3_ids))
+        # 이달의 테마 TOP3: 선택 횟수 기준
+        top3 = Background.objects.order_by('-choose_count')[:3]
 
         return Response({
             "top3": BackgroundSerializer(top3, many=True, context={'request': request}).data,
