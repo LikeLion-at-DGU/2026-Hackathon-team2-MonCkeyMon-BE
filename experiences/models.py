@@ -21,5 +21,8 @@ class ExperienceSession(models.Model):
     # 세션 상태 (START -> PHOTO_DONE -> PROCESSING -> COMPLETED -> FAILED)
     status = models.CharField(max_length=20, default='START')
 
+    # 링크 수신 여부
+    link_received = models.BooleanField(default=False)
+
     def __str__(self):
         return f"Session {self.id} - {self.status}"

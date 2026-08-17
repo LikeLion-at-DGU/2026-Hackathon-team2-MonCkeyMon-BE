@@ -15,6 +15,8 @@ class ShareDetailSerializer(serializers.ModelSerializer):
     product_purchase_url = serializers.SerializerMethodField()
     composite_image_url = serializers.SerializerMethodField()
 
+    link_received = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = ExperienceSession
         fields = [
@@ -27,6 +29,7 @@ class ShareDetailSerializer(serializers.ModelSerializer):
             'product_name',
             'product_image_url',
             'product_purchase_url',
+            'link_received',
         ]
 
     def get_composite_image_url(self, obj):

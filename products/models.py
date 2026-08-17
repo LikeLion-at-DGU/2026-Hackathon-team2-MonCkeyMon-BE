@@ -31,6 +31,7 @@ class Product(models.Model):
     is_new = models.BooleanField(default=False)              # 신상 여부
     like_count = models.IntegerField(default=0)
     choose_count = models.IntegerField(default=0)
+    link_count = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['id']
