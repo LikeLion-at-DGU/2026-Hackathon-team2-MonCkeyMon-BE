@@ -59,3 +59,19 @@ class CategorySessionTopSerializer(serializers.Serializer):
     rank = serializers.IntegerField()
     category = serializers.CharField()
     session_count = serializers.IntegerField()
+
+class ProductSessionSerializer(serializers.ModelSerializer):
+    session_count = serializers.IntegerField(
+        source='choose_count',
+        read_only=True
+    )
+
+    class Meta:
+        model = Product
+        fields = [
+            'id',
+            'name',
+            'color',
+            'size',
+            'session_count',
+        ]

@@ -18,7 +18,8 @@ from .serializers import (
     TotalVisitorCountSerializer,
     DailyVisitorCountSerializer,
     ProductInterestSerializer,
-    CategorySessionTopSerializer
+    CategorySessionTopSerializer,
+    ProductSessionSerializer,
 )
 
 class ChooseCountView(APIView):
@@ -168,6 +169,20 @@ class CategorySessionTop5View(APIView):
 
         serializer = CategorySessionTopSerializer(
             data,
+            many=True
+        )
+
+        return Response(serializer.data)
+    
+class ProductSessionView(APIView):
+
+    def get(self, request):
+        products = Product.objects.order_by(
+            '-choose_count'
+        )
+
+        serializer = ProductSessionSerializer(
+            products,
             many=True
         )
 
