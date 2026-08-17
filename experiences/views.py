@@ -163,3 +163,26 @@ class ExperienceStatusView(APIView):
                 )
 
         return Response(response_data, status=status.HTTP_200_OK)
+    
+class ShareLinkView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, session_id):
+        session = get_object_or_404(
+            ExperienceSession,
+            id=session_id
+        )
+
+        session.link_received = True
+        session.save(update_fields=["link_received"])
+
+        if session.product:
+            session.product.link_count += 1
+            session.product.save(update_fields=["link_count"])
+
+        return Response({
+            "message": "링크 수신 완료",
+            "session_id": str(session.id),
+            "product_id": session.product.id if session.product else None,
+            "link_received": session.link_received,
+        }, status=status.HTTP_200_OK)

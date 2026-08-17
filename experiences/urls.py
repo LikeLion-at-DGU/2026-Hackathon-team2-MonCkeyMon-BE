@@ -23,4 +23,9 @@ urlpatterns = [
         views.ExperienceStatusView.as_view(),
         name="status",
     ),
+    path(
+        "<uuid:session_id>/link/",
+        views.ShareLinkView.as_view(),
+        name="share-link"
+    ),
 ]
