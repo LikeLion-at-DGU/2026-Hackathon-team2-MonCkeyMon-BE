@@ -39,3 +39,23 @@ class TotalVisitorCountSerializer(serializers.Serializer):
 class DailyVisitorCountSerializer(serializers.Serializer):
     date = serializers.DateField()
     count = serializers.IntegerField()
+
+class ProductInterestSerializer(serializers.Serializer):
+    rank = serializers.IntegerField()
+    product_id = serializers.IntegerField()
+    product_name = serializers.CharField()
+
+    color = serializers.CharField()
+    size = serializers.CharField()
+    gender = serializers.CharField()
+    category = serializers.CharField()
+
+    session_count = serializers.IntegerField()
+    link_received_count = serializers.IntegerField()
+    link_click_count = serializers.IntegerField()
+    total_score = serializers.IntegerField()
+
+class CategorySessionTopSerializer(serializers.Serializer):
+    rank = serializers.IntegerField()
+    category = serializers.CharField()
+    session_count = serializers.IntegerField()
