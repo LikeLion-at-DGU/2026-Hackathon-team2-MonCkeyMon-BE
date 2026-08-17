@@ -32,5 +32,10 @@ class ProductLikeCountSerializer(serializers.ModelSerializer):
         ]
 
 
-class CompletedExperienceCountSerializer(serializers.Serializer):
-    completed_experience_count = serializers.IntegerField()
+class TotalVisitorCountSerializer(serializers.Serializer):
+    total_visitor_count = serializers.IntegerField()
+
+
+class DailyVisitorCountSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    count = serializers.IntegerField()
