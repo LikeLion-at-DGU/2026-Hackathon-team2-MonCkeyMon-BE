@@ -1,11 +1,8 @@
 import os
-import io
 import base64
 import logging
 
 from openai import OpenAI
-from PIL import Image
-
 
 
 logger = logging.getLogger(__name__)
@@ -24,29 +21,13 @@ def _to_openai_file(field_file):
             f"'{field_file.name}' 파일에서 읽은 데이터가 비어 있습니다."
         )
 
-    try:
-        img = Image.open(io.BytesIO(raw))
-        img.load()
-    except Exception as e:
-        raise ValueError(
-            f"'{field_file.name}'을(를) 이미지로 열 수 없습니다: {e}"
-        )
+    filename = os.path.basename(field_file.name)
 
-    if img.mode not in ("RGB", "RGBA"):
-        img = img.convert("RGBA" if "A" in img.mode else "RGB")
-
-    buffer = io.BytesIO()
-    img.save(buffer, format="PNG")
-
-    data = buffer.getvalue()
-
-    filename = (
-        os.path.splitext(
-            os.path.basename(field_file.name)
-        )[0] + ".png"
+    return (
+        filename,
+        raw,
+        "image/png",
     )
-
-    return (filename, data, "image/png")
 
 
 def generate_composite_image(session):
@@ -55,9 +36,6 @@ def generate_composite_image(session):
     client = OpenAI(
         api_key=api_key
     )
-    
-
-    print("API KEY:", api_key[:12])
 
     # Django ImageFieldFile → OpenAI용 파일
     person_file = _to_openai_file(
@@ -80,7 +58,7 @@ def generate_composite_image(session):
             bag_file,
             background_file,
         ],
-
+        quality="low",
 
         prompt=(
             "Create one realistic composite photograph using "
