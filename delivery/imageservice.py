@@ -33,9 +33,7 @@ def _to_openai_file(field_file):
 def generate_composite_image(session):
     api_key = os.environ["OPENAI_API_KEY"]
 
-    client = OpenAI(
-        api_key=api_key
-    )
+    client = OpenAI(api_key=api_key)
 
     # Django ImageFieldFile → OpenAI용 파일
     person_file = _to_openai_file(
@@ -50,42 +48,41 @@ def generate_composite_image(session):
         session.background.image
     )
 
+    # 상품 카테고리별 자연스러운 가방 위치
+    category_position = {
+        "토트백&쇼퍼백": "carry it naturally by the hand or arm",
+        "숄더백&크로스백": "wear it on the shoulder or across the body",
+        "백팩": "wear it on the back with the shoulder straps",
+        "탑 핸들백": "carry it by the top handle in the hand",
+        "트래블": "carry it naturally as travel luggage",
+        "벨트백": "wear it around the waist or across the chest",
+        "미니백": "carry or wear it naturally according to its shape",
+        "클러치&파우치": "hold it naturally in the hand",
+    }
+
+    position = category_position.get(
+        session.product.category,
+        "place it in a natural position for this type of bag"
+    )
+
     result = client.images.edit(
         model="gpt-image-2",
-
         image=[
             person_file,
             bag_file,
             background_file,
         ],
         quality="low",
-
         prompt=(
-            "Create one realistic composite photograph using "
-            "the three provided reference images.\n\n"
-
-            "REFERENCE 1 — PERSON:\n"
-            "Use this image as the main person. "
-            "Preserve the person's identity, face, body proportions, "
-            "clothing, and overall appearance.\n\n"
-
-            "REFERENCE 2 — BAG:\n"
-            "Use this image as the exact product reference. "
-            "Preserve the bag's design, shape, color, logo, "
-            "pattern, and proportions.\n\n"
-
-            "REFERENCE 3 — BACKGROUND:\n"
-            "Use this image as the environment/background.\n\n"
-
-            "COMPOSITION:\n"
-            "Place the person naturally into the background. "
-            "Place the bag naturally in the person's hand/body position "
-            "as if the person is actually holding the bag. "
+            "Create one realistic photograph using the three images.\n"
+            "Preserve the person's appearance and clothing.\n"
+            "Preserve the exact bag design, color, shape, and proportions.\n"
+            "Use the third image as the background.\n"
+            f"Bag category: {session.product.category}.\n"
+            f"Bag placement: {position}.\n"
             "Match the bag's scale, perspective, lighting, shadows, "
-            "occlusion, and position to the person.\n\n"
-
-            "The final result should look like a single real photograph, "
-            "not a collage or three-image combination."
+            "and occlusion naturally.\n"
+            "Make the final image look like one real photograph."
         ),
     )
 
