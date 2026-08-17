@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ChooseCountView, ChooseCountTop5View, ProductLikeCountView, CompletedExperienceCountView
+from .views import ChooseCountView, ChooseCountTop5View, ProductLikeCountView, TotalVisitorCountView, DailyVisitorCountView
 
 urlpatterns = [
     path(
@@ -17,9 +17,16 @@ urlpatterns = [
         ProductLikeCountView.as_view(),
         name='product-like-count'
     ),
-        path(
-        'completed-experience-count/',
-        CompletedExperienceCountView.as_view(),
-        name='completed-experience-count'
+    path(
+    'visitor-count/',
+    TotalVisitorCountView.as_view(),
+    name='visitor-count'
     ),
+
+    path(
+        'visitor-count/daily/',
+        DailyVisitorCountView.as_view(),
+        name='visitor-count-daily'
+    ),
+    
 ]
