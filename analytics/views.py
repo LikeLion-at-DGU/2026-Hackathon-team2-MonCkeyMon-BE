@@ -20,6 +20,7 @@ from .serializers import (
     ProductInterestSerializer,
     CategorySessionTopSerializer,
     ProductSessionSerializer,
+    TotalLinkAnalyticsSerializer,
 )
 
 class ChooseCountView(APIView):
@@ -193,5 +194,29 @@ class ProductSessionView(APIView):
             products,
             many=True
         )
+
+        return Response(serializer.data)
+
+
+
+
+
+class TotalLinkAnalyticsView(APIView):
+
+    def get(self, request):
+        total_link_received = ExperienceSession.objects.filter(
+            link_received=True
+        ).count()
+
+        total_link_click = (
+        Product.objects.aggregate(
+            total=Sum("like_count")
+        )["total"] or 0
+)
+
+        serializer = TotalLinkAnalyticsSerializer({
+            "total_link_received": total_link_received,
+            "total_link_click": total_link_click,
+        })
 
         return Response(serializer.data)
