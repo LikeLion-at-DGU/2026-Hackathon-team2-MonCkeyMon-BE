@@ -11,17 +11,7 @@ from datetime import date
 from django.db.models import F, IntegerField, ExpressionWrapper
 from django.db.models import Sum
 
-from .serializers import (
-    ProductChooseCountSerializer,
-    BackgroundChooseCountSerializer,
-    ProductLikeCountSerializer,
-    TotalVisitorCountSerializer,
-    DailyVisitorCountSerializer,
-    ProductInterestSerializer,
-    CategorySessionTopSerializer,
-    ProductSessionSerializer,
-    TotalLinkAnalyticsSerializer,
-)
+from .serializers import *
 
 class ChooseCountView(APIView):
 
@@ -198,9 +188,6 @@ class ProductSessionView(APIView):
         return Response(serializer.data)
 
 
-
-
-
 class TotalLinkAnalyticsView(APIView):
 
     def get(self, request):
@@ -211,8 +198,8 @@ class TotalLinkAnalyticsView(APIView):
         total_link_click = (
         Product.objects.aggregate(
             total=Sum("like_count")
-        )["total"] or 0
-)
+            )["total"] or 0
+        )
 
         serializer = TotalLinkAnalyticsSerializer({
             "total_link_received": total_link_received,
