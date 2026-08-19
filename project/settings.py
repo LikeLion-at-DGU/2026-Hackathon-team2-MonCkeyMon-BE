@@ -39,11 +39,10 @@ CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         'CORS_ALLOWED_ORIGINS',
-        'http://localhost:3000,http://localhost:5173',
+        'http://localhost:3000,http://localhost:5173,https://mappingcustommoment.netlify.app',
     ).split(',')
     if origin.strip()
 ]
-
 
 # Application definition
 
