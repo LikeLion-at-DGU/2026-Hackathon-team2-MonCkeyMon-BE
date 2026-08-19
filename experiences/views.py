@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.utils import timezone
 
 from .models import ExperienceSession
 from .serializers import (
@@ -157,6 +158,9 @@ class ExperienceStatusView(APIView):
 
         return Response(response_data, status=status.HTTP_200_OK)
 
+
+
+
 class ShareLinkView(APIView):
     permission_classes = [AllowAny]
 
@@ -170,12 +174,34 @@ class ShareLinkView(APIView):
         session.save(update_fields=["link_received"])
 
         if session.product:
-            session.product.link_count += 1
-            session.product.save(update_fields=["link_count"])
+            product = session.product
+            today = timezone.localdate()
+
+            # 오늘 처음 링크가 발생한 경우
+            if product.today_link_date != today:
+                product.today_link_count = 0
+                product.today_link_date = today
+
+            # 전체 링크 수신 횟수
+            product.link_count += 1
+
+            # 오늘 링크 수신 횟수
+            product.today_link_count += 1
+
+            product.save(update_fields=[
+                "link_count",
+                "today_link_count",
+                "today_link_date",
+            ])
 
         return Response({
             "message": "링크 수신 완료",
             "session_id": str(session.id),
             "product_id": session.product.id if session.product else None,
             "link_received": session.link_received,
+            "today_link_count": (
+                session.product.today_link_count
+                if session.product
+                else None
+            ),
         }, status=status.HTTP_200_OK)

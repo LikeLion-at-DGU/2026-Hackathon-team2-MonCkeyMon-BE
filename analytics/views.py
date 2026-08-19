@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from experiences.models import ExperienceSession
 from products.models import Product, Background
 
-
+from django.utils import timezone
 from django.db.models import F, IntegerField, ExpressionWrapper
 from django.db.models import Sum
 
@@ -220,3 +220,41 @@ class TotalLinkAnalyticsView(APIView):
         })
 
         return Response(serializer.data)
+
+
+class TodayLikeCountView(APIView):
+
+    def get(self, request):
+        today = timezone.localdate()
+
+        today_like_count = sum(
+            Product.objects.filter(
+                today_like_date=today
+            ).values_list(
+                "today_like_count",
+                flat=True
+            )
+        )
+
+        return Response({
+            "today_click_count": today_like_count,
+        })
+
+
+class TodayLinkCountView(APIView):
+
+    def get(self, request):
+        today = timezone.localdate()
+
+        today_link_count = sum(
+            Product.objects.filter(
+                today_link_date=today
+            ).values_list(
+                "today_link_count",
+                flat=True
+            )
+        )
+
+        return Response({
+            "today_link_count": today_link_count,
+        })
