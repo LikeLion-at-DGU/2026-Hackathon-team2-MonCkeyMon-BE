@@ -3,7 +3,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-
+from django.utils import timezone
 from .models import Product, Background
 from .serializers import ProductSerializer, BackgroundSerializer
 
@@ -71,16 +71,37 @@ class BackgroundListView(ListAPIView):
         })
 
 
+
+
+
 class ProductLikeView(APIView):
     """POST /api/products/<id>/like/"""
 
     def post(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
+
+        today = timezone.localdate()
+
+        # 오늘 처음 좋아요가 들어온 경우
+        if product.today_like_date != today:
+            product.today_like_count = 0
+            product.today_like_date = today
+
+        # 전체 좋아요
         product.like_count += 1
-        product.save()
+
+        # 오늘 좋아요
+        product.today_like_count += 1
+
+        product.save(update_fields=[
+            "like_count",
+            "today_like_count",
+            "today_like_date",
+        ])
 
         return Response({
             "message": "추천 반영 완료",
             "product_id": product.id,
             "like_count": product.like_count,
+            "today_like_count": product.today_like_count,
         }, status=status.HTTP_200_OK)

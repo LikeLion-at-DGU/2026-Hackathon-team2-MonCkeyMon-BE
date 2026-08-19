@@ -30,8 +30,14 @@ class Product(models.Model):
     purchase_url = models.CharField(max_length=500, blank=True, null=True)
     is_new = models.BooleanField(default=False)              # 신상 여부
     like_count = models.IntegerField(default=0)
+    today_like_count = models.IntegerField(default=0)
+    today_like_date = models.DateField(null=True, blank=True)
+
     choose_count = models.IntegerField(default=0)
+
     link_count = models.PositiveIntegerField(default=0)
+    today_link_count = models.PositiveIntegerField(default=0)
+    today_link_date = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = ['id']
