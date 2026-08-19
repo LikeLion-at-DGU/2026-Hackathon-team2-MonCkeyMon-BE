@@ -3,7 +3,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
+from datetime import date
 from .models import Product, Background
 from .serializers import ProductSerializer, BackgroundSerializer
 
@@ -80,7 +80,7 @@ class ProductLikeView(APIView):
     def post(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
 
-        today = timezone.localdate()
+        today = date.today()
 
         # 오늘 처음 좋아요가 들어온 경우
         if product.today_like_date != today:
