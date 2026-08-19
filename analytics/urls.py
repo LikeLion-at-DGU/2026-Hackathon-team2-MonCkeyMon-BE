@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ChooseCountView, ChooseCountTop5View, ProductLikeCountView, TotalVisitorCountView, DailyVisitorCountView, ProductInterestView, CategorySessionTop5View, ProductSessionView
+from .views import ChooseCountView, ChooseCountTop5View, ProductLikeCountView, TotalVisitorCountView, DailyVisitorCountView, ProductInterestView, CategorySessionTop5View, ProductSessionView, TotalLinkAnalyticsView
 
 urlpatterns = [
     path(
@@ -42,6 +42,11 @@ urlpatterns = [
         'product-session/',
         ProductSessionView.as_view(),
         name='product-session'
+    ),
+    path(
+    "total-link/",
+    TotalLinkAnalyticsView.as_view(),
+    name="total-link-analytics",
     ),
     
 ]
