@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.utils import timezone
+from datetime import date
 
 from .models import ExperienceSession
 from .serializers import (
@@ -175,7 +175,7 @@ class ShareLinkView(APIView):
 
         if session.product:
             product = session.product
-            today = timezone.localdate()
+            today = date.today()
 
             # 오늘 처음 링크가 발생한 경우
             if product.today_link_date != today:
