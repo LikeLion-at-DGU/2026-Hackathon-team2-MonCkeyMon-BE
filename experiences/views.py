@@ -5,7 +5,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import date
-
+from django.db.models import F
+from products.models import ProductDailyLog
 from .models import ExperienceSession
 from .serializers import (
     ExperienceSessionSerializer,
@@ -41,6 +42,7 @@ class ExperienceDetailView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
+        
         if "background_id" in request.data:
             background = session.background
 
@@ -60,6 +62,7 @@ class ExperienceDetailView(APIView):
                     "today_choose_date",
                 ])
 
+        
         if "product_id" in request.data:
             product = session.product
 
@@ -78,6 +81,15 @@ class ExperienceDetailView(APIView):
                     "today_choose_count",
                     "today_choose_date",
                 ])
+
+               
+                log, _ = ProductDailyLog.objects.get_or_create(
+                    product=product,
+                    date=today,
+                )
+                ProductDailyLog.objects.filter(id=log.id).update(
+                    choose_count=F('choose_count') + 1
+                )
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
