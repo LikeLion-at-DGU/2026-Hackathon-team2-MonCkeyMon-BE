@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from experiences.models import ExperienceSession
-from products.models import Product, Background
+from products.models import Product, Background, ProductDailyLog
 
 from datetime import date
 from django.db.models import F, IntegerField, ExpressionWrapper
@@ -103,13 +103,11 @@ class TotalVisitorCountView(APIView):
 
 class DailyVisitorCountView(APIView):
 
-
     def get(self, request):
         data = (
-            ExperienceSession.objects
-            .annotate(date=TruncDate('created_at'))
+            ProductDailyLog.objects
             .values('date')
-            .annotate(count=Count('id'))
+            .annotate(count=Sum('choose_count'))
             .order_by('date')
         )
 
