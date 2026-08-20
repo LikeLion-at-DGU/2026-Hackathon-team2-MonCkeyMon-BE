@@ -45,8 +45,20 @@ class ExperienceDetailView(APIView):
             background = session.background
 
             if background:
+                today = date.today()
+
+                if background.today_choose_date != today:
+                    background.today_choose_count = 0
+                    background.today_choose_date = today
+
                 background.choose_count += 1
-                background.save(update_fields=["choose_count"])
+                background.today_choose_count += 1
+
+                background.save(update_fields=[
+                    "choose_count",
+                    "today_choose_count",
+                    "today_choose_date",
+                ])
 
         if "product_id" in request.data:
             product = session.product

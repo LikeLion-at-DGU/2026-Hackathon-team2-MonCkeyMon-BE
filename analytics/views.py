@@ -14,17 +14,35 @@ from django.db.models import Case, When, Value
 
 from .serializers import *
 
+def _with_effective_choose_count(queryset, period):
+    if period != 'today':
+        return queryset.order_by('-choose_count')
+
+    today = date.today()
+    return queryset.annotate(
+        effective_choose_count=Case(
+            When(today_choose_date=today, then='today_choose_count'),
+            default=Value(0),
+            output_field=IntegerField(),
+        )
+    ).order_by('-effective_choose_count')
+
+
 class ChooseCountView(APIView):
 
     def get(self, request):
+        period = request.query_params.get('period')
+
         products = ProductChooseCountSerializer(
-            Product.objects.all(),
-            many=True
+            _with_effective_choose_count(Product.objects.all(), period),
+            many=True,
+            context={'period': period},
         ).data
 
         backgrounds = BackgroundChooseCountSerializer(
-            Background.objects.all(),
-            many=True
+            _with_effective_choose_count(Background.objects.all(), period),
+            many=True,
+            context={'period': period},
         ).data
 
         return Response({
@@ -36,14 +54,18 @@ class ChooseCountView(APIView):
 class ChooseCountTop5View(APIView):
 
     def get(self, request):
+        period = request.query_params.get('period')
+
         products = ProductChooseCountSerializer(
-            Product.objects.order_by('-choose_count')[:5],
-            many=True
+            _with_effective_choose_count(Product.objects.all(), period)[:5],
+            many=True,
+            context={'period': period},
         ).data
 
         backgrounds = BackgroundChooseCountSerializer(
-            Background.objects.order_by('-choose_count')[:5],
-            many=True
+            _with_effective_choose_count(Background.objects.all(), period)[:5],
+            many=True,
+            context={'period': period},
         ).data
 
         return Response({
@@ -141,14 +163,32 @@ class ProductInterestView(APIView):
 class CategorySessionTop5View(APIView):
 
     def get(self, request):
-        categories = (
-            Product.objects
-            .values('category')
-            .annotate(
-                session_count=Sum('choose_count')
+        period = request.query_params.get('period')
+
+        if period == 'today':
+            today = date.today()
+            products = Product.objects.annotate(
+                effective_choose_count=Case(
+                    When(today_choose_date=today, then='today_choose_count'),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                )
             )
-            .order_by('-session_count')[:5]
-        )
+            categories = (
+                products
+                .values('category')
+                .annotate(session_count=Sum('effective_choose_count'))
+                .order_by('-session_count')[:5]
+            )
+        else:
+            categories = (
+                Product.objects
+                .values('category')
+                .annotate(
+                    session_count=Sum('choose_count')
+                )
+                .order_by('-session_count')[:5]
+            )
 
         data = []
 
