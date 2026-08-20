@@ -208,19 +208,15 @@ class TotalLinkAnalyticsView(APIView):
 
         return Response(serializer.data)
 
-
 class TodayLikeCountView(APIView):
 
     def get(self, request):
         today = date.today()
 
-        today_like_count = sum(
-            Product.objects.filter(
-                today_like_date=today
-            ).values_list(
-                "today_like_count",
-                flat=True
-            )
+        today_like_count = (
+            Product.objects.filter(today_like_date=today).aggregate(
+                total=Sum("today_like_count")
+            )["total"] or 0
         )
 
         return Response({
@@ -233,13 +229,10 @@ class TodayLinkCountView(APIView):
     def get(self, request):
         today = date.today()
 
-        today_link_count = sum(
-            Product.objects.filter(
-                today_link_date=today
-            ).values_list(
-                "today_link_count",
-                flat=True
-            )
+        today_link_count = (
+            Product.objects.filter(today_link_date=today).aggregate(
+                total=Sum("today_link_count")
+            )["total"] or 0
         )
 
         return Response({

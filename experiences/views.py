@@ -177,15 +177,12 @@ class ShareLinkView(APIView):
             product = session.product
             today = date.today()
 
-            # 오늘 처음 링크가 발생한 경우
             if product.today_link_date != today:
                 product.today_link_count = 0
                 product.today_link_date = today
 
-            # 전체 링크 수신 횟수
             product.link_count += 1
 
-            # 오늘 링크 수신 횟수
             product.today_link_count += 1
 
             product.save(update_fields=[
