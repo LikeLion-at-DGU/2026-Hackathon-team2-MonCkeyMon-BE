@@ -70,7 +70,7 @@ MCM 팝업/전시 키오스크용 백엔드. 방문자가 사진을 찍으면 �
 | GET | `/visitor-count/today/` | 오늘 방문자 수 |
 | GET | `/product-interest/` | 상품 관심도 점수(선택×1 + 링크×3 + 좋아요×5) |
 | GET | `/category-session/top5/` | 카테고리별 선택 TOP5 |
-| GET | `/product-session/` | 상품 검색/신상 필터 |
+| GET | `/product-session/` | 상품별 선택 횟수 목록 (`search`, `is_new` 필터 + `period=today`로 당일/누적 전환) |
 | GET | `/total-link/` | 전체 링크 수신/클릭 수 |
 | GET | `/today-click-count/` | 오늘 구매 링크 클릭 수 |
 | GET | `/today-link-count/` | 오늘 링크 받기 수 |
