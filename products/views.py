@@ -81,16 +81,13 @@ class ProductLikeView(APIView):
         product = get_object_or_404(Product, pk=pk)
 
         today = date.today()
-
-        # 오늘 처음 좋아요가 들어온 경우
+        
         if product.today_like_date != today:
             product.today_like_count = 0
             product.today_like_date = today
 
-        # 전체 좋아요
         product.like_count += 1
 
-        # 오늘 좋아요
         product.today_like_count += 1
 
         product.save(update_fields=[

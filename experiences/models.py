@@ -11,8 +11,8 @@ class ExperienceSession(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     
     # 이미지 파일
-    person_image = models.ImageField(upload_to='persons/', null=True, blank=True)          # 원본 사진
-    composite_image = models.ImageField(upload_to='composites/', null=True, blank=True)    # ✨ 추가: 배경 합성 사진
+    person_image = models.ImageField(upload_to='persons/', null=True, blank=True)          
+    composite_image = models.ImageField(upload_to='composites/', null=True, blank=True)    
     
     # AI 가이드 및 전화번호
     guide_action = models.CharField(max_length=50, null=True, blank=True)
