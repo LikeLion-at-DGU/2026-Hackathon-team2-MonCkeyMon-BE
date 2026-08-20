@@ -1,10 +1,6 @@
-from django.db.models import Count
-from django.db.models.functions import TruncDate
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from experiences.models import ExperienceSession
 from products.models import Product, Background, ProductDailyLog
 
 from datetime import date
@@ -210,7 +206,7 @@ class ProductSessionView(APIView):
 
         search = request.query_params.get('search')
         is_new = request.query_params.get('is_new')
-        period = request.query_params.get('period')  # 'today' 또는 미지정(누적)
+        period = request.query_params.get('period')  
 
         if search:
             products = products.filter(name__icontains=search)
