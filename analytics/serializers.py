@@ -22,7 +22,7 @@ class BackgroundChooseCountSerializer(serializers.ModelSerializer):
         ]
 
 
-class ProductLikeCountSerializer(serializers.ModelSerializer):
+class ProductLikeCountSerializer(serializers.ModelSerializer): # 상품 별 구매 링크 클릭 횟수
     class Meta:
         model = Product
         fields = [
@@ -77,9 +77,15 @@ class ProductSessionSerializer(serializers.ModelSerializer):
             'session_count',
         ]
 
-class TotalLinkAnalyticsSerializer(serializers.Serializer):
+class TotalLinkAnalyticsSerializer(serializers.Serializer): # 전체 링크 받기 횟수, 전체 링크 클릭 횟수
     total_link_received = serializers.IntegerField()
     total_link_click = serializers.IntegerField()
+
+class TodayLikeCountSerializer(serializers.Serializer): # 구매 링크 클릭 횟수(하루)
+    today_click_count = serializers.IntegerField()
+
+class TodayLinkCountSerializer(serializers.Serializer): # 링크 받기 한 수(하루)
+    today_link_count = serializers.IntegerField()
 
 class TodayVisitorCountSerializer(serializers.Serializer):
     today_visitor_count = serializers.IntegerField()
