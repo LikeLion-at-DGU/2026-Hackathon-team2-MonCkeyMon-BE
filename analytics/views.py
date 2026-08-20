@@ -238,3 +238,18 @@ class TodayLinkCountView(APIView):
         return Response({
             "today_link_count": today_link_count,
         })
+
+class TodayVisitorCountView(APIView):
+
+    def get(self, request):
+        today = date.today()
+
+        today_visitor_count = ExperienceSession.objects.filter(
+            created_at__date=today
+        ).count()
+
+        serializer = TodayVisitorCountSerializer({
+            "today_visitor_count": today_visitor_count,
+        })
+
+        return Response(serializer.data)

@@ -6,6 +6,7 @@ urlpatterns = [
     path('like-count/', ProductLikeCountView.as_view(), name='product-like-count'),
     path('visitor-count/', TotalVisitorCountView.as_view(), name='visitor-count'),
     path('visitor-count/daily/', DailyVisitorCountView.as_view(), name='visitor-count-daily'),
+    path('visitor-count/today/', TodayVisitorCountView.as_view(), name='visitor-count-today'),
     path('product-interest/', ProductInterestView.as_view(), name='product-interest'),
     path('category-session/top5/', CategorySessionTop5View.as_view(), name='category-session-top5'),
     path('product-session/', ProductSessionView.as_view(), name='product-session'),

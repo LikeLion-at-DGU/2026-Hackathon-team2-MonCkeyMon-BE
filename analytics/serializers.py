@@ -80,3 +80,6 @@ class ProductSessionSerializer(serializers.ModelSerializer):
 class TotalLinkAnalyticsSerializer(serializers.Serializer):
     total_link_received = serializers.IntegerField()
     total_link_click = serializers.IntegerField()
+
+class TodayVisitorCountSerializer(serializers.Serializer):
+    today_visitor_count = serializers.IntegerField()
