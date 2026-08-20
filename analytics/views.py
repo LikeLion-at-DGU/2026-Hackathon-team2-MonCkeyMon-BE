@@ -163,14 +163,32 @@ class ProductInterestView(APIView):
 class CategorySessionTop5View(APIView):
 
     def get(self, request):
-        categories = (
-            Product.objects
-            .values('category')
-            .annotate(
-                session_count=Sum('choose_count')
+        period = request.query_params.get('period')
+
+        if period == 'today':
+            today = date.today()
+            products = Product.objects.annotate(
+                effective_choose_count=Case(
+                    When(today_choose_date=today, then='today_choose_count'),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                )
             )
-            .order_by('-session_count')[:5]
-        )
+            categories = (
+                products
+                .values('category')
+                .annotate(session_count=Sum('effective_choose_count'))
+                .order_by('-session_count')[:5]
+            )
+        else:
+            categories = (
+                Product.objects
+                .values('category')
+                .annotate(
+                    session_count=Sum('choose_count')
+                )
+                .order_by('-session_count')[:5]
+            )
 
         data = []
 
