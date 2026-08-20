@@ -34,6 +34,8 @@ class Product(models.Model):
     today_like_date = models.DateField(null=True, blank=True)
 
     choose_count = models.PositiveIntegerField(default=0)
+    today_choose_count = models.PositiveIntegerField(default=0)
+    today_choose_date = models.DateField(null=True, blank=True)
 
     link_count = models.PositiveIntegerField(default=0)
     today_link_count = models.PositiveIntegerField(default=0)

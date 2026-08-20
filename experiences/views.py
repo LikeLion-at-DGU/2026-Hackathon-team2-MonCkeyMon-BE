@@ -52,8 +52,20 @@ class ExperienceDetailView(APIView):
             product = session.product
 
             if product:
+                today = date.today()
+
+                if product.today_choose_date != today:
+                    product.today_choose_count = 0
+                    product.today_choose_date = today
+
                 product.choose_count += 1
-                product.save(update_fields=["choose_count"])
+                product.today_choose_count += 1
+
+                product.save(update_fields=[
+                    "choose_count",
+                    "today_choose_count",
+                    "today_choose_date",
+                ])
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

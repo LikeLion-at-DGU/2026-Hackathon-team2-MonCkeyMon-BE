@@ -10,6 +10,7 @@ from products.models import Product, Background
 from datetime import date
 from django.db.models import F, IntegerField, ExpressionWrapper
 from django.db.models import Sum
+from django.db.models import Case, When, Value
 
 from .serializers import *
 
@@ -172,17 +173,29 @@ class ProductSessionView(APIView):
 
         search = request.query_params.get('search')
         is_new = request.query_params.get('is_new')
+        period = request.query_params.get('period')  # 'today' 또는 미지정(누적)
 
         if search:
             products = products.filter(name__icontains=search)
         if is_new:
             products = products.filter(is_new=is_new.lower() == 'true')
 
-        products = products.order_by('-choose_count')
+        if period == 'today':
+            today = date.today()
+            products = products.annotate(
+                effective_session_count=Case(
+                    When(today_choose_date=today, then='today_choose_count'),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                )
+            ).order_by('-effective_session_count')
+        else:
+            products = products.order_by('-choose_count')
 
         serializer = ProductSessionSerializer(
             products,
-            many=True
+            many=True,
+            context={'period': period},
         )
 
         return Response(serializer.data)
