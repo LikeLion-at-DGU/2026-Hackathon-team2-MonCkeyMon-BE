@@ -72,7 +72,7 @@ class Background(models.Model):
 
 class ProductDailyLog(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='daily_logs')
-    date = models.DateField(default=date.today)  # 특정 날짜 지정 및 조회가 용이하도록 default 설정
+    date = models.DateField(default=date.today)
     choose_count = models.PositiveIntegerField(default=0)
 
     class Meta:
