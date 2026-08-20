@@ -103,6 +103,7 @@ class TotalVisitorCountView(APIView):
 
 class DailyVisitorCountView(APIView):
 
+
     def get(self, request):
         data = (
             ExperienceSession.objects
@@ -112,11 +113,7 @@ class DailyVisitorCountView(APIView):
             .order_by('date')
         )
 
-        serializer = DailyVisitorCountSerializer(
-            data,
-            many=True
-        )
-
+        serializer = DailyVisitorCountSerializer(data, many=True)
         return Response(serializer.data)
     
 

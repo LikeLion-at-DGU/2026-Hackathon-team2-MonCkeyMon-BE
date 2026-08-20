@@ -1,5 +1,5 @@
 from django.db import models
-
+from datetime import date
 
 class Product(models.Model):
     GENDER_CHOICES = [
@@ -67,3 +67,16 @@ class Background(models.Model):
 
     def __str__(self):
         return self.name
+
+
+
+class ProductDailyLog(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='daily_logs')
+    date = models.DateField(default=date.today)  # 특정 날짜 지정 및 조회가 용이하도록 default 설정
+    choose_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('product', 'date')
+
+    def __str__(self):
+        return f"{self.date} - {self.product.name} ({self.choose_count})"
