@@ -5,6 +5,8 @@ from products.models import Product, Background
 
 
 class ProductChooseCountSerializer(serializers.ModelSerializer):
+    choose_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
         fields = [
@@ -13,8 +15,18 @@ class ProductChooseCountSerializer(serializers.ModelSerializer):
             'choose_count',
         ]
 
+    def get_choose_count(self, obj):
+        if self.context.get('period') == 'today':
+            if obj.today_choose_date == date.today():
+                return obj.today_choose_count
+            return 0
+
+        return obj.choose_count
+
 
 class BackgroundChooseCountSerializer(serializers.ModelSerializer):
+    choose_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Background
         fields = [
@@ -22,6 +34,14 @@ class BackgroundChooseCountSerializer(serializers.ModelSerializer):
             'name',
             'choose_count',
         ]
+
+    def get_choose_count(self, obj):
+        if self.context.get('period') == 'today':
+            if obj.today_choose_date == date.today():
+                return obj.today_choose_count
+            return 0
+
+        return obj.choose_count
 
 
 class ProductLikeCountSerializer(serializers.ModelSerializer): # 상품 별 구매 링크 클릭 횟수

@@ -59,6 +59,8 @@ class Background(models.Model):
     type = models.CharField(max_length=50, choices=TYPE_CHOICES, default='나라 별')
     tags = models.CharField(max_length=200, blank=True)      # 쉼표 구분: "후지산,신사"
     choose_count = models.PositiveIntegerField(default=0)
+    today_choose_count = models.PositiveIntegerField(default=0)
+    today_choose_date = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = ['id']
