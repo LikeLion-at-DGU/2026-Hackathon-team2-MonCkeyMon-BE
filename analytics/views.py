@@ -51,7 +51,7 @@ class ChooseCountTop5View(APIView):
         })
 
 
-class ProductLikeCountView(APIView):
+class ProductLikeCountView(APIView): # 상품 별 구매 링크 클릭 횟수
 
     def get(self, request):
         products = ProductLikeCountSerializer(
@@ -188,7 +188,7 @@ class ProductSessionView(APIView):
         return Response(serializer.data)
 
 
-class TotalLinkAnalyticsView(APIView):
+class TotalLinkAnalyticsView(APIView): # 전체 구매 링크 클릭 횟수, 전체 링크 받기 한 수
 
     def get(self, request):
         total_link_received = ExperienceSession.objects.filter(
@@ -208,7 +208,7 @@ class TotalLinkAnalyticsView(APIView):
 
         return Response(serializer.data)
 
-class TodayLikeCountView(APIView):
+class TodayLikeCountView(APIView): # 구매 링크 클릭 횟수(하루)
 
     def get(self, request):
         today = date.today()
@@ -219,12 +219,14 @@ class TodayLikeCountView(APIView):
             )["total"] or 0
         )
 
-        return Response({
+        serializer = TodayLikeCountSerializer({
             "today_click_count": today_like_count,
         })
 
+        return Response(serializer.data)
 
-class TodayLinkCountView(APIView):
+
+class TodayLinkCountView(APIView): # 링크 받기 한 수(하루)
 
     def get(self, request):
         today = date.today()
@@ -235,9 +237,11 @@ class TodayLinkCountView(APIView):
             )["total"] or 0
         )
 
-        return Response({
+        serializer = TodayLinkCountSerializer({
             "today_link_count": today_link_count,
         })
+
+        return Response(serializer.data)
 
 class TodayVisitorCountView(APIView):
 
