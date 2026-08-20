@@ -191,9 +191,11 @@ class ProductSessionView(APIView):
 class TotalLinkAnalyticsView(APIView): # 전체 구매 링크 클릭 횟수, 전체 링크 받기 한 수
 
     def get(self, request):
-        total_link_received = ExperienceSession.objects.filter(
-            link_received=True
-        ).count()
+        total_link_received = (
+            Product.objects.aggregate(
+                total=Sum("link_count")
+            )["total"] or 0
+        )
 
         total_link_click = (
         Product.objects.aggregate(
