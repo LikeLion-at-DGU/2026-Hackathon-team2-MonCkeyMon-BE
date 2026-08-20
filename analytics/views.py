@@ -90,7 +90,9 @@ class ProductLikeCountView(APIView): # 상품 별 구매 링크 클릭 횟수
 class TotalVisitorCountView(APIView):
 
     def get(self, request):
-        count = ExperienceSession.objects.count()
+        count = Product.objects.aggregate(
+            total=Sum('choose_count')
+        )['total'] or 0
 
         serializer = TotalVisitorCountSerializer({
             'total_visitor_count': count
@@ -303,9 +305,11 @@ class TodayVisitorCountView(APIView):
     def get(self, request):
         today = date.today()
 
-        today_visitor_count = ExperienceSession.objects.filter(
-            created_at__date=today
-        ).count()
+        today_visitor_count = (
+            Product.objects.filter(today_choose_date=today).aggregate(
+                total=Sum('today_choose_count')
+            )['total'] or 0
+        )
 
         serializer = TodayVisitorCountSerializer({
             "today_visitor_count": today_visitor_count,
