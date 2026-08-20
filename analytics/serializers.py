@@ -1,3 +1,5 @@
+from datetime import date
+
 from rest_framework import serializers
 from products.models import Product, Background
 
@@ -61,10 +63,7 @@ class CategorySessionTopSerializer(serializers.Serializer):
     session_count = serializers.IntegerField()
 
 class ProductSessionSerializer(serializers.ModelSerializer):
-    session_count = serializers.IntegerField(
-        source='choose_count',
-        read_only=True
-    )
+    session_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -76,6 +75,14 @@ class ProductSessionSerializer(serializers.ModelSerializer):
             'is_new',
             'session_count',
         ]
+
+    def get_session_count(self, obj):
+        if self.context.get('period') == 'today':
+            if obj.today_choose_date == date.today():
+                return obj.today_choose_count
+            return 0
+
+        return obj.choose_count
 
 class TotalLinkAnalyticsSerializer(serializers.Serializer): # 전체 링크 받기 횟수, 전체 링크 클릭 횟수
     total_link_received = serializers.IntegerField()
